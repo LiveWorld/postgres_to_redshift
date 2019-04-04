@@ -18,12 +18,33 @@ module PostgresToRedshift
   extend self
 
   def update_tables
-    notifier = Slack::Notifier.new(ENV["SLACK_WEBHOOK_URL"], channel: ENV["SLACK_CHANNEL"], username: ENV["SLACK_USERNAME"])
-    notifier.ping "Postgresql_to_Redshift has started from source #{ENV['POSTGRES_TO_REDSHIFT_SOURCE_URI']}.", icon_emoji: ENV["SLACK_ICON_EMOJI"]
-
-    update_tables = UpdateTables.new(bucket: bucket, source_uri: source_uri, target_uri: target_uri, schema: schema)
-    incremental? ? update_tables.incremental : update_tables.full
+    #notifier.ping "Postgresql_to_Redshift has started from source #{ENV['POSTGRES_TO_REDSHIFT_SOURCE_URI']}.", icon_emoji: ENV["SLACK_ICON_EMOJI"]
+    #update_tables = UpdateTables.new(bucket: bucket, source_uri: source_uri, target_uri: target_uri, schema: schema)
+    #incremental? ? update_tables.incremental : update_tables.full
+    cleanup
   end
+
+
+  def cleanup
+    puts "Deleting psv.gz files left in the S3 bucket."
+    #s3 ||= ::Aws::S3::Client.new(access_key_id: ENV['S3_DATABASE_EXPORT_ID'], secret_access_key: ENV['S3_DATABASE_EXPORT_KEY'])
+    if AWS::S3::Bucket.new(bucket, client: s3.client).objects({prefix: 'export'}).delete
+      notifier.ping "Postgresql_to_Redshift has finished, now deleting psv.gz files left in the S3 bucket.", icon_emoji: ENV["SLACK_ICON_EMOJI"]
+    else
+    end
+  end
+
+
+
+
+
+
+
+
+
+
+
+
 
   def dry_run?
     ENV['POSTGRES_TO_REDSHIFT_DRY_RUN'] == 'true'
@@ -53,5 +74,9 @@ module PostgresToRedshift
 
   def bucket
     @bucket ||= s3.buckets[ENV.fetch('S3_DATABASE_EXPORT_BUCKET')]
+  end
+
+  def notifier
+    @notifier ||= Slack::Notifier.new(ENV["SLACK_WEBHOOK_URL"], channel: ENV["SLACK_CHANNEL"], username: ENV["SLACK_USERNAME"])
   end
 end
