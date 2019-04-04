@@ -33,7 +33,6 @@ export S3_DATABASE_EXPORT_KEY='yourkey'
 export S3_DATABASE_EXPORT_BUCKET='some-bucket-to-use'
 export REDSHIFT_INCLUDE_TABLES='table-pattern-to-include1,table-pattern-to-include2'
 
-
 postgres_to_redshift
 ```
 
@@ -51,6 +50,12 @@ export POSTGRES_TO_REDSHIFT_INCREMENTAL=true
 ```
 
 It will record the start time of the last import in a local file and will import changes on or after that start time for subsequent imports.
+
+For tables that cannot run incrementally, please specify the tables in this variable, and they will always be run in "full" mode:
+
+```bash
+export TABLES_ALWAYS_FULL_IMPORT='table-that-has-no-primary-id,table-that-has-no-updated_at'
+```
 
 ### Dry Runs
 

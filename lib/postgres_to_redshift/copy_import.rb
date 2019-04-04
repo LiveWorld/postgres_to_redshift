@@ -88,8 +88,15 @@ module PostgresToRedshift
     end
 
     def import_table
+      tables_for_full = ENV.fetch('TABLES_ALWAYS_FULL_IMPORT','').split(',')
       args = { table: table, target_connection: target_connection, schema: schema }
-      import = incremental? ? IncrementalImport.new(**args) : FullImport.new(**args)
+
+      if incremental? && !tables_for_full.include?(table)
+        import = IncrementalImport.new(**args)
+      else
+        import = FullImport.new(**args)
+      end
+
       import.run
     end
 
