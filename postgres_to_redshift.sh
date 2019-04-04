@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export POSTGRES_TO_REDSHIFT_SOURCE_URI='postgres://pguser@leatherman-production-9.cjinxeflo3gu.us-east-1.rds.amazonaws.com/leatherman_production'
-export POSTGRES_TO_REDSHIFT_TARGET_URI='postgres://dorice:<PASSWORDHERE>@dorice.cqnaq0j9y4fv.us-east-1.redshift.amazonaws.com:5439/dorice'
+export POSTGRES_TO_REDSHIFT_SOURCE_URI='postgres://<postgresql_database>/<database>'
+export POSTGRES_TO_REDSHIFT_TARGET_URI='postgres://<user>:<password>@<redshift_url>:5439/<database>'
 export POSTGRES_TO_REDSHIFT_TARGET_SCHEMA='public'
 export S3_DATABASE_EXPORT_ID='<INSERT ID HERE>'
 export S3_DATABASE_EXPORT_KEY='<INSERT KEY>'
