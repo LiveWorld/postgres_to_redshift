@@ -11,12 +11,16 @@ require 'postgres_to_redshift/full_import'
 require 'postgres_to_redshift/incremental_import'
 require 'postgres_to_redshift/update_tables'
 require 'postgres_to_redshift/version'
+require 'slack-notifier'
 
 module PostgresToRedshift
   TIMESTAMP_FILE_NAME = 'POSTGRES_TO_REDHSIFT_TIMESTAMP'.freeze
   extend self
 
   def update_tables
+    notifier = Slack::Notifier.new(ENV["SLACK_WEBHOOK_URL"], channel: ENV["SLACK_CHANNEL"], username: ENV["SLACK_USERNAME"])
+    notifier.ping "Postgresql_to_Redshift has started from source #{ENV['POSTGRES_TO_REDSHIFT_SOURCE_URI']}.", icon_emoji: ENV["SLACK_ICON_EMOJI"]
+
     update_tables = UpdateTables.new(bucket: bucket, source_uri: source_uri, target_uri: target_uri, schema: schema)
     incremental? ? update_tables.incremental : update_tables.full
   end
