@@ -31,6 +31,8 @@ export POSTGRES_TO_REDSHIFT_TARGET_SCHEMA='testing-data'
 export S3_DATABASE_EXPORT_ID='yourid'
 export S3_DATABASE_EXPORT_KEY='yourkey'
 export S3_DATABASE_EXPORT_BUCKET='some-bucket-to-use'
+export REDSHIFT_INCLUDE_TABLES='table-pattern-to-include1,table-pattern-to-include2'
+
 
 postgres_to_redshift
 ```
