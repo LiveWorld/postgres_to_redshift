@@ -1,7 +1,8 @@
 module PostgresToRedshift
   class UpdateTables
-    def initialize(bucket:, source_uri:, target_uri:, schema:)
+    def initialize(bucket:, s3:, source_uri:, target_uri:, schema:)
       @bucket = bucket
+      @s3 = s3
       @source_uri = source_uri
       @target_uri = target_uri
       @schema = schema
@@ -13,7 +14,7 @@ module PostgresToRedshift
         with_retry do
           in_transaction do
             tables.each do |table|
-              CopyImport.new(table: table, bucket: bucket, source_connection: source_connection, target_connection: target_connection, schema: schema, incremental_from: incremental_from, incremental_to: incremental_to).run
+              CopyImport.new(table: table, s3: s3, bucket: bucket, source_connection: source_connection, target_connection: target_connection, schema: schema, incremental_from: incremental_from, incremental_to: incremental_to).run
             end
           end
         end
@@ -25,7 +26,7 @@ module PostgresToRedshift
         tables.each do |table|
           with_retry do
             in_transaction do
-              CopyImport.new(table: table, bucket: bucket, source_connection: source_connection, target_connection: target_connection, schema: schema, incremental_to: incremental_to).run
+              CopyImport.new(table: table, s3: s3, bucket: bucket, source_connection: source_connection, target_connection: target_connection, schema: schema, incremental_to: incremental_to).run
             end
           end
         end
@@ -117,6 +118,6 @@ module PostgresToRedshift
       end
     end
 
-    attr_reader :bucket, :source_uri, :target_uri, :schema
+    attr_reader :bucket, :s3, :source_uri, :target_uri, :schema
   end
 end
