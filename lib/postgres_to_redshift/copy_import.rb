@@ -1,3 +1,5 @@
+require 'slack-notifier'
+
 module PostgresToRedshift
   class CopyImport
     KILOBYTE = 1024
@@ -17,6 +19,9 @@ module PostgresToRedshift
     end
 
     def run
+      notifier = Slack::Notifier.new(ENV["SLACK_WEBHOOK_URL"], channel: ENV["SLACK_CHANNEL"], username: ENV["SLACK_USERNAME"])
+      notifier.ping "Postgresql_to_Redshift has started.", icon_emoji: ENV["SLACK_ICON_EMOJI"]
+
       copy_table
       import_table
     end
